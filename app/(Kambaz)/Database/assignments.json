@@ -1,0 +1,74 @@
+[
+    {
+        "_id": "A1-RS101",
+        "course": "RS101",
+        "title": "Rocket Report",
+        "points": 100,
+        "due": "2025-10-31",
+        "available": "2025-10-01",
+        "description": "Write a report on liquid vs solid propulsion."
+    },
+    {
+        "_id": "A2-RS101",
+        "course": "RS101",
+        "title": "Nozzle Math",
+        "points": 80,
+        "due": "2025-11-07",
+        "available": "2025-10-08",
+        "description": "Back-of-the-envelope nozzle design."
+    },
+    {
+        "_id": "A1-RS102",
+        "course": "RS102",
+        "title": "Wind Tunnel Lab",
+        "points": 50,
+        "due": "2025-10-28",
+        "available": "2025-10-05",
+        "description": "Measure lift/drag on an airfoil."
+    },
+    {
+        "_id": "A2-RS102",
+        "course": "RS102",
+        "title": "Supersonic Quiz",
+        "points": 30,
+        "due": "2025-11-03",
+        "available": "2025-10-10",
+        "description": "Concept check on shock waves."
+    },
+    {
+        "_id": "A1-RS103",
+        "course": "RS103",
+        "title": "Subsystems Brief",
+        "points": 60,
+        "due": "2025-11-01",
+        "available": "2025-10-04",
+        "description": "Summarize power/thermal/comms tradeoffs."
+    },
+    {
+        "_id": "A1-CS1234",
+        "course": "CS1234",
+        "title": "JS Basics",
+        "points": 10,
+        "due": "2025-10-20",
+        "available": "2025-10-01",
+        "description": "Variables, types, control flow."
+    },
+    {
+        "_id": "A2-CS1234",
+        "course": "CS1234",
+        "title": "React Props",
+        "points": 15,
+        "due": "2025-10-27",
+        "available": "2025-10-06",
+        "description": "Prop drilling and composition."
+    },
+    {
+        "_id": "A1-CS4550",
+        "course": "CS4550",
+        "title": "Next Routing",
+        "points": 25,
+        "due": "2025-10-25",
+        "available": "2025-10-05",
+        "description": "App Router + dynamic segments."
+    }
+]
