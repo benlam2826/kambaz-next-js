@@ -12,13 +12,14 @@ import {
   FormCheck,
 } from "react-bootstrap";
 import * as db from "../../../../Database";
+import type { Assignment } from "../../../../Database/types";
 
 export default function AssignmentEditor() {
   // Get course id and assignment id from the URL
   const { cid, aid } = useParams<{ cid: string; aid: string }>();
 
   // Look up the assignment from the database
-  const assignment = (db.assignments as any[]).find((a) => a._id === aid);
+  const assignment = (db.assignments as Assignment[]).find((a) => a._id === aid);
 
   if (!assignment) {
     return (

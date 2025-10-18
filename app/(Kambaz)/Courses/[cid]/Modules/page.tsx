@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import * as db from "../../../Database";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
+import type { Module, Lesson } from "../../../Database/types";
 
 function ModuleControlButtons() { return null; }
 function LessonControlButtons() { return null; }
@@ -29,10 +30,10 @@ export default function Modules() {
               <ModuleControlButtons />
             </div>
 
-            {Array.isArray(module.lessons) && module.lessons.length > 0 ? (
+            {(module.lessons ?? []).length > 0 ? (
               <ListGroup className="wd-lessons rounded-0">
-                {module.lessons.map((lesson: any) => (
-                  <ListGroupItem key={lesson._id} className="wd-lesson p-3 ps-1">
+                {(module.lessons as Lesson[]).map((lesson) => (
+                  <ListGroupItem key={lesson._id ?? lesson.name} className="wd-lesson p-3 ps-1">
                     <BsGripVertical className="me-2 fs-3" />
                     {lesson.name}
                     <LessonControlButtons />

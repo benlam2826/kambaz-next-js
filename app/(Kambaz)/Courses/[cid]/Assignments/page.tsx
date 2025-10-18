@@ -4,10 +4,11 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import * as db from "../../../Database";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
+import type { Assignment } from "../../../Database/types";
 
 export default function AssignmentsPage() {
   const { cid } = useParams<{ cid: string }>();
-  const items = (db.assignments as any[]).filter(a => a.course === cid);
+  const items = (db.assignments as Assignment[]).filter(a => a.course === cid);
 
   return (
     <div id="wd-assignments" className="container">
