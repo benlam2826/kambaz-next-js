@@ -4,14 +4,14 @@ import { useParams } from "next/navigation";
 import * as db from "../../../Database";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
-import type { Module, Lesson } from "../../../Database/types";
+import type { Module as ModuleType, Lesson } from "../../../Database/types";
 
 function ModuleControlButtons() { return null; }
 function LessonControlButtons() { return null; }
 
 export default function Modules() {
   const { cid } = useParams<{ cid: string }>();
-  const modules = (db.modules as any[]).filter((m) => m.course === cid);
+  const modules = (db.modules as ModuleType[]).filter((m) => m.course === cid);
 
   return (
     <div id="wd-modules-page" className="container">
