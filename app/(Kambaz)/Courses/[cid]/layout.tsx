@@ -1,3 +1,4 @@
+"use client";
 import { ReactNode } from "react";
 import { FaAlignJustify } from "react-icons/fa6";
 import CourseNavigation from "./Navigation";
