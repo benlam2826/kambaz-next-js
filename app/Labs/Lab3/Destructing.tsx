@@ -11,7 +11,7 @@ export default function Destructing() {
       <h3>Object Destructing</h3>
       <div>
         const &#123; name, age &#125; =
-        &#123; name: "John", age: 25 &#125;
+        &#123; name: &quot;John&quot;, age: 25 &#125;
       </div>
       <br />
       name = {name} <br />
@@ -19,7 +19,7 @@ export default function Destructing() {
 
       <h3>Array Destructing</h3>
       <div>
-        const [first, second, third] = ["one","two","three"]
+        const [first, second, third] = [&quot;one&quot;, &quot;two&quot;, &quot;three&quot;]
       </div>
       <br />
       first = {first} <br />
