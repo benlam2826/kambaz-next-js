@@ -1,5 +1,6 @@
 "use client";
-import { ReactNode } from "react";
+
+import { ReactNode, use } from "react";
 import { FaAlignJustify } from "react-icons/fa6";
 import CourseNavigation from "./Navigation";
 import { courses } from "../../Database";
@@ -9,9 +10,10 @@ export default function CoursesLayout({
   params,
 }: {
   children: ReactNode;
-  params: { cid: string };
+  params: Promise<{ cid: string }>;
 }) {
-  const { cid } = params;
+  const { cid } = use(params);
+
   const course = courses.find((c) => c._id === cid);
 
   return (
@@ -30,3 +32,4 @@ export default function CoursesLayout({
     </div>
   );
 }
+
