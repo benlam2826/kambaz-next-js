@@ -1,3 +1,5 @@
+"use client";
+
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../store";
 import { increment, decrement } from "./counterReducer";

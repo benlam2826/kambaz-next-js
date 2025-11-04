@@ -19,7 +19,6 @@ export default function Modules() {
   return (
     <div id="wd-modules-page" className="container">
       <h3>Modules</h3>
-
       <div className="mb-3">
         <ModulesControls
           moduleName={moduleName}
@@ -31,7 +30,6 @@ export default function Modules() {
           }}
         />
       </div>
-
       <ListGroup id="wd-modules" className="rounded-0">
         {modules
           .filter((m: Module) => m.course === cid)
@@ -60,7 +58,6 @@ export default function Modules() {
                   editModule={(id) => dispatch(editModule(id))}
                 />
               </div>
-
               {(module.lessons ?? []).length > 0 ? (
                 <ListGroup className="wd-lessons rounded-0">
                   {module.lessons.map((lesson) => (
