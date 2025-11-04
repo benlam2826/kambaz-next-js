@@ -1,30 +1,57 @@
+"use client";
 import { Button, FormControl, ListGroupItem } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { addTodo, updateTodo, setTodo } from "./todosReducer";
+import type { RootState } from "../../store";
 
-export interface Todo {
-    id: string;
-    title: string;
-}
+type Todo = { id: string; title: string };
+type TodoDraft = { id?: string; title: string };
 
-interface Props {
-    todo: Todo;
-    setTodo: (t: Todo) => void;
-    addTodo: (t: Todo) => void;
-    updateTodo: (t: Todo) => void;
-}
+export default function TodoForm() {
+    const todo = useSelector<RootState, TodoDraft>(
+        (state) => state.todosReducer.todo as TodoDraft
+    );
+    const dispatch = useDispatch();
+    const title = todo.title ?? "";
 
-export default function TodoForm({ todo, setTodo, addTodo, updateTodo }: Props) {
     return (
-        <ListGroupItem>
-            <Button onClick={() => addTodo(todo)} id="wd-add-todo-click">
-                Add
-            </Button>
-            <Button onClick={() => updateTodo(todo)} id="wd-update-todo-click">
+        <ListGroupItem className="d-flex align-items-center gap-2">
+            <FormControl
+                placeholder="Learn Mongo"
+                value={title}
+                onChange={(e) => {
+                    const next: TodoDraft = {
+                        ...(todo.id ? { id: todo.id } : {}),
+                        title: e.target.value,
+                    };
+                    dispatch(setTodo(next));
+                }}
+                className="flex-grow-1"
+            />
+            <Button
+                onClick={() => {
+                    if (!todo.id) return;
+                    const payload: Todo = { id: todo.id, title: title.trim() };
+                    dispatch(updateTodo(payload));
+                }}
+                id="wd-update-todo-click"
+                className="btn btn-warning btn-sm rounded-2 px-2"
+                disabled={!todo.id || title.trim().length === 0}
+            >
                 Update
             </Button>
-            <FormControl
-                value={todo.title}
-                onChange={(e) => setTodo({ ...todo, title: e.target.value })}
-            />
+            <Button
+                onClick={() => {
+                    const trimmed = title.trim();
+                    if (trimmed.length === 0) return;
+                    dispatch(addTodo({ title: trimmed }));
+                }}
+                id="wd-add-todo-click"
+                className="btn btn-success btn-sm rounded-2 px-2"
+                disabled={title.trim().length === 0}
+            >
+                Add
+            </Button>
         </ListGroupItem>
     );
 }
