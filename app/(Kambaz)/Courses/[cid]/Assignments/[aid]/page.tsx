@@ -12,14 +12,20 @@ import {
   FormCheck,
 } from "react-bootstrap";
 import * as db from "../../../../Database";
-import type { Assignment } from "../../../../Database/types";
+
+type DbAssignment = {
+  _id: string;
+  course: string;
+  title: string;
+  description: string;
+  points: number;
+  due: string;
+  available: string;
+};
 
 export default function AssignmentEditor() {
-  // Get course id and assignment id from the URL
   const { cid, aid } = useParams<{ cid: string; aid: string }>();
-
-  // Look up the assignment from the database
-  const assignment = (db.assignments as Assignment[]).find((a) => a._id === aid);
+  const assignment = (db.assignments as DbAssignment[]).find((a) => a._id === aid);
 
   if (!assignment) {
     return (
@@ -31,7 +37,6 @@ export default function AssignmentEditor() {
       </div>
     );
   }
-
   const {
     title = "",
     description = "",
@@ -45,7 +50,6 @@ export default function AssignmentEditor() {
       <h2 className="mb-3">Edit Assignment</h2>
 
       <Form>
-        {/* Assignment Name */}
         <FormLabel htmlFor="wd-assignment-name" className="fw-semibold">
           Assignment Name
         </FormLabel>
@@ -55,8 +59,6 @@ export default function AssignmentEditor() {
           defaultValue={title}
           placeholder="Enter assignment name"
         />
-
-        {/* Description */}
         <FormLabel htmlFor="wd-assignment-description" className="fw-semibold">
           Description
         </FormLabel>
@@ -67,9 +69,7 @@ export default function AssignmentEditor() {
           rows={8}
           defaultValue={description}
         />
-
         <Row className="g-4">
-          {/* Left column */}
           <Col md={6}>
             <FormLabel htmlFor="wd-points" className="fw-semibold">
               Points
@@ -81,8 +81,6 @@ export default function AssignmentEditor() {
               defaultValue={points}
               min={0}
             />
-
-            {/* Assignment Group */}
             <FormLabel htmlFor="wd-assignment-group" className="fw-semibold">
               Assignment Group
             </FormLabel>
@@ -92,8 +90,6 @@ export default function AssignmentEditor() {
               <option value="EXAMS">EXAMS</option>
               <option value="PROJECT">PROJECT</option>
             </FormSelect>
-
-            {/* Display Grade As */}
             <FormLabel htmlFor="wd-display-grade-as" className="fw-semibold">
               Display Grade as
             </FormLabel>
@@ -103,8 +99,6 @@ export default function AssignmentEditor() {
               <option value="LETTER_GRADE">Letter Grade</option>
               <option value="COMPLETE_INCOMPLETE">Complete/Incomplete</option>
             </FormSelect>
-
-            {/* Submission Type */}
             <FormLabel htmlFor="wd-submission-type" className="fw-semibold">
               Submission Type
             </FormLabel>
@@ -113,8 +107,6 @@ export default function AssignmentEditor() {
               <option value="ONPAPER">On Paper</option>
               <option value="NO_SUBMISSION">No Submission</option>
             </FormSelect>
-
-            {/* Online Entry Options */}
             <FormLabel className="fw-semibold">Online Entry Options</FormLabel>
             <div className="mb-3">
               <FormCheck id="wd-text-entry" label="Text Entry" />
@@ -124,8 +116,6 @@ export default function AssignmentEditor() {
               <FormCheck id="wd-file-upload" label="File Uploads" />
             </div>
           </Col>
-
-          {/* Right column */}
           <Col md={6}>
             <div id="wd-assign" className="border rounded p-3">
               <h5 className="mb-3">Assign</h5>
@@ -144,7 +134,6 @@ export default function AssignmentEditor() {
                 className="mb-3"
                 defaultValue={available}
               />
-
               <FormLabel htmlFor="wd-due-date" className="fw-semibold">
                 Due
               </FormLabel>
@@ -153,7 +142,7 @@ export default function AssignmentEditor() {
               <FormLabel htmlFor="wd-available-until" className="fw-semibold">
                 Until
               </FormLabel>
-              <FormControl id="wd-available-until" type="date" className="mb-1" />
+              <FormControl id="wd-available-until" type="date" className="mb-1" defaultValue={available} />
 
               <div className="text-muted small">
                 Calendar icons aren’t required; date format can vary (e.g., YYYY-MM-DD).
@@ -161,8 +150,6 @@ export default function AssignmentEditor() {
             </div>
           </Col>
         </Row>
-
-        {/* Actions */}
         <div className="d-flex justify-content-end gap-2 mt-4">
           <Link href={`/Courses/${cid}/Assignments`} className="btn btn-secondary" id="wd-cancel">
             Cancel
