@@ -9,12 +9,15 @@ import { FormControl, Button } from "react-bootstrap";
 import { setCurrentUser } from "../reducer";
 
 export default function Signin() {
-  const [credentials, setCredentials] = useState<any>({});
+  const [credentials, setCredentials] = useState<{ username: string; password: string }>({
+    username: "",
+    password: "",
+  });
   const dispatch = useDispatch();
 
   const signin = () => {
     const user = db.users.find(
-      (u: any) =>
+      (u: { username: string; password: string }) =>
         u.username === credentials.username &&
         u.password === credentials.password
     );

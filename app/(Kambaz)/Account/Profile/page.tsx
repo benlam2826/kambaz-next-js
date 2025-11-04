@@ -10,7 +10,7 @@ import { setCurrentUser } from "../reducer";
 export default function Profile() {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
-  const [profile, setProfile] = useState<any>({});
+  const [profile, setProfile] = useState<{ username: string; password: string; firstName: string; lastName: string; dob: string; email: string; role: string }>({ username: "", password: "", firstName: "", lastName: "", dob: "", email: "", role: "" });
 
   useEffect(() => {
     if (!currentUser) {

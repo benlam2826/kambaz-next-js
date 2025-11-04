@@ -23,11 +23,12 @@ export interface Module {
 export interface Assignment {
   _id: string;
   course: string;
-  title: string;
+  name: string;
+  description: string;
   points: number;
   due: string;
-  available: string;
-  description: string;
+  availableFrom: string;
+  availableUntil: string;
 }
 
 export interface User {
@@ -36,10 +37,12 @@ export interface User {
   lastName: string;
   loginId: string;
   section?: string;
+  dob: string;
   role: "STUDENT" | "TA" | "FACULTY" | string;
   lastActivity?: string;
   totalActivity?: string;
 }
+
 
 export interface Enrollment {
   _id: string;
