@@ -1,15 +1,16 @@
-import type { ReactNode } from "react";
-import AccountNavigation from "./Navigation";
+"use client";
 
-export default function AccountLayout({ children }: { children: ReactNode }) {
+import { Provider } from "react-redux";
+import store from "../store";
+
+export default function KambazLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div id="wd-account" className="d-flex">
-      <div className="d-none d-md-block me-3">
-        <AccountNavigation />
-      </div>
-      <div className="flex-fill" style={{ maxWidth: 720 }}>
-        {children}
-      </div>
-    </div>
+    <Provider store={store}>
+      <div className="container-fluid p-0">{children}</div>
+    </Provider>
   );
 }

@@ -32,6 +32,11 @@ export default function Labs() {
             Lab 3: JavaScript Fundamentals
           </Link>
         </li>
+        <li>
+          <Link href="/Labs/Lab4" id="wd-lab4-link">
+            Lab 4: User Events
+          </Link>
+        </li>
       </ul>
 
       {/* Required: GitHub repo link with id="wd-github" */}

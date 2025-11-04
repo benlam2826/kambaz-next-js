@@ -1,14 +1,35 @@
+"use client";
+import { useState } from "react";
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa6";
 import GreenCheckmark from "./GreenCheckmark";
-export default function ModulesControls() {
+import ModuleEditor from "./ModuleEditor";
+
+export default function ModulesControls({
+    moduleName,
+    setModuleName,
+    addModule,
+}: {
+    moduleName: string;
+    setModuleName: (title: string) => void;
+    addModule: () => void;
+}) {
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
     return (
-        <div id="wd-modules-controls" className="text-nowrap">
-            <Button variant="danger" size="lg" className="me-1 float-end" id="wd-add-module-btn">
-                <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
-                Module
+        <div
+            id="wd-modules-controls"
+            className="d-flex flex-wrap justify-content-end align-items-center gap-2 w-100 mb-3"
+        >
+            <Button variant="secondary" size="lg" id="wd-collapse-all">
+                Collapse All
             </Button>
-            <Dropdown className="float-end me-2">
+            <Button variant="secondary" size="lg" id="wd-view-progress">
+                View Progress
+            </Button>
+            <Dropdown>
                 <DropdownToggle variant="secondary" size="lg" id="wd-publish-all-btn">
                     <GreenCheckmark /> Publish All
                 </DropdownToggle>
@@ -30,13 +51,28 @@ export default function ModulesControls() {
                     </DropdownItem>
                 </DropdownMenu>
             </Dropdown>
-
-            <Button variant="secondary" size="lg" className="float-end me-2" id="wd-view-progress">
-                View Progress
+            <Button
+                variant="danger"
+                size="lg"
+                id="wd-add-module-btn"
+                onClick={handleShow}
+            >
+                <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
+                Module
             </Button>
-            <Button variant="secondary" size="lg" className="float-end me-2" id="wd-collapse-all">
-                Collapse All
-            </Button>
+            <ModuleEditor
+                show={show}
+                handleClose={handleClose}
+                dialogTitle="Add Module"
+                moduleName={moduleName}
+                setModuleName={setModuleName}
+                addModule={() => {
+                    const trimmed = moduleName.trim();
+                    if (!trimmed) return;
+                    addModule();
+                    handleClose();
+                }}
+            />
         </div>
     );
 }
