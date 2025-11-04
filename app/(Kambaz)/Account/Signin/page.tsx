@@ -22,7 +22,6 @@ export default function Signin() {
         u.password === credentials.password
     );
     if (!user) return;
-    dispatch(setCurrentUser(user));
     redirect("/Dashboard");
   };
 

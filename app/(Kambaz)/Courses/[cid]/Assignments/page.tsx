@@ -32,7 +32,6 @@ export default function AssignmentsPage() {
           + Assignment
         </Link>
       </div>
-
       <ListGroup className="mt-3">
         {courseAssignments.map((a) => (
           <ListGroupItem key={a._id} className="d-flex justify-content-between">
