@@ -1,61 +1,57 @@
 "use client";
 import Link from "next/link";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../store";
-import { useParams, useRouter } from "next/navigation";
-import { ListGroup, ListGroupItem, Button } from "react-bootstrap";
-import { FaTrash } from "react-icons/fa";
-import { deleteAssignment } from "../Assignments/reducer";
+import { useParams } from "next/navigation";
+import { useSelector } from "react-redux";
+import { ListGroup, ListGroupItem } from "react-bootstrap";
+import type { RootState } from "../../../store";
 
-export default function Assignments() {
+export interface Assignment {
+  _id: string;
+  course: string;
+  name: string;
+  description: string;
+  points: number;
+  due?: string;
+  availableFrom?: string;
+  availableUntil?: string;
+}
+
+export default function AssignmentsPage() {
   const { cid } = useParams<{ cid: string }>();
-  const router = useRouter();
-  const dispatch = useDispatch();
   const { assignments } = useSelector(
-    (s: RootState) => s.assignmentsReducer
+    (s: RootState) => s.assignmentsReducer as { assignments: Assignment[] }
   );
 
-  const courseAssignments = assignments.filter((a: any) => a.course === cid);
+  const courseAssignments = assignments.filter((a) => a.course === cid);
 
   return (
-    <div className="p-3" id="wd-assignments">
+    <div className="p-3" id="wd-assignments-page">
       <div className="d-flex justify-content-between align-items-center">
         <h3>Assignments</h3>
-        <Button
-          variant="danger"
-          onClick={() => router.push(`/Courses/${cid}/Assignments/Editor`)}
-        >
+        <Link href={`/Courses/${cid}/Assignments/Editor`} className="btn btn-danger">
           + Assignment
-        </Button>
+        </Link>
       </div>
+
       <ListGroup className="mt-3">
-        {courseAssignments.map((a: any) => (
-          <ListGroupItem
-            key={a._id}
-            className="d-flex align-items-center justify-content-between"
-          >
+        {courseAssignments.map((a) => (
+          <ListGroupItem key={a._id} className="d-flex justify-content-between">
+            <div>
+              <Link href={`/Courses/${cid}/Assignments/Editor?aid=${a._id}`}>
+                {a.name}
+              </Link>
+              <div className="small text-secondary">
+                {a.points} pts · Due {a.due || "—"}
+              </div>
+            </div>
             <Link
+              className="btn btn-outline-secondary btn-sm"
               href={`/Courses/${cid}/Assignments/Editor?aid=${a._id}`}
-              className="text-decoration-none"
             >
-              <strong>{a.name}</strong> · {a.points} pts · Due {a.due || "—"}
+              Edit
             </Link>
-            <FaTrash
-              className="text-danger"
-              role="button"
-              onClick={() => {
-                if (confirm("Delete this assignment?")) {
-                  dispatch(deleteAssignment(a._id));
-                }
-              }}
-            />
           </ListGroupItem>
         ))}
-        {courseAssignments.length === 0 && (
-          <ListGroupItem className="text-secondary">
-            No assignments yet.
-          </ListGroupItem>
-        )}
       </ListGroup>
     </div>
   );

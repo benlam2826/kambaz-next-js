@@ -1,23 +1,20 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import * as db from "../Database";
-import {
-  Row, Col, Card, Button, CardImg, CardBody, CardTitle, CardText
-} from "react-bootstrap";
-import type { Course } from "../Database/types";
-import { FormControl } from "react-bootstrap";
+import { Row, Col, Card, Button, CardImg, CardBody, CardTitle, CardText, FormControl } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewCourse, deleteCourse, updateCourse } from "../Courses/[cid]/reducer";
-import { RootState } from "../store";
+import type { RootState } from "../store";
+import type { Course } from "../Courses/[cid]/reducer";
+import { v4 as uuidv4 } from "uuid";
+
+type CourseDraft = Pick<Course, "_id" | "name" | "number" | "startDate" | "endDate" | "description" | "image">;
 
 export default function Dashboard() {
+  const { courses } = useSelector((state: RootState) => state.coursesReducer);
   const dispatch = useDispatch();
 
-  const { courses } = useSelector((state: RootState) => state.coursesReducer);
-  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
-
-  const [course, setCourse] = useState<any>({
+  const [course, setCourse] = useState<CourseDraft>({
     _id: "0",
     name: "New Course",
     number: "New Number",
@@ -38,20 +35,30 @@ export default function Dashboard() {
   };
   const fallback = "/images/reactjs.png";
 
-  const { enrollments } = db;
-  const visibleCourses =
-    currentUser
-      ? courses.filter((c: any) =>
-        enrollments.some(
-          (e: any) => e.user === currentUser._id && e.course === c._id
-        )
-      )
-      : [];
   return (
     <div id="wd-dashboard" className="p-4">
       <h1 id="wd-dashboard-title">Dashboard</h1>
       <hr />
-      <h5 className="mb-2">New Course</h5>
+
+      <h5 className="mb-2">
+        New Course
+        <Button
+          className="float-end"
+          id="wd-add-new-course-click"
+          onClick={() => dispatch(addNewCourse({ ...course, _id: uuidv4() }))}
+        >
+          Add
+        </Button>
+        <Button
+          variant="warning"
+          className="float-end me-2"
+          id="wd-update-course-click"
+          onClick={() => dispatch(updateCourse(course as Course))}
+        >
+          Update
+        </Button>
+      </h5>
+
       <div className="mb-3" id="wd-dashboard-course-form">
         <FormControl
           value={course.name}
@@ -67,93 +74,57 @@ export default function Dashboard() {
           onChange={(e) => setCourse({ ...course, description: e.target.value })}
         />
       </div>
-      <div className="d-flex gap-2 mb-3">
-        <Button
-          className="btn btn-primary"
-          id="wd-add-new-course-click"
-          onClick={() => dispatch(addNewCourse(course))}
-        >
-          Add
-        </Button>
-        <Button
-          variant="warning"
-          className="btn"
-          id="wd-update-course-click"
-          onClick={() => dispatch(updateCourse(course))}
-        >
-          Update
-        </Button>
-      </div>
-      <h2 id="wd-dashboard-published">
-        Published Courses ({visibleCourses.length})
-      </h2>
+
+      <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2>
       <hr />
 
-      {!currentUser && (
-        <p className="text-secondary">
-          Please sign in to view your enrolled courses.
-        </p>
-      )}
-      <div id="wd-dashboard-courses">
-        <Row xs={1} md={5} className="g-4">
-          {visibleCourses.map((c: Course) => (
-            <Col
-              key={c._id}
-              className="wd-dashboard-course"
-              style={{ width: "300px" }}
-            >
-              <Card className="h-100">
-                <CardImg
-                  variant="top"
-                  src={imageById[c._id] ?? fallback}
-                  width="100%"
-                  height={160}
-                  alt={c.name}
-                  style={{ objectFit: "cover" }}
-                />
-                <CardBody className="card-body">
-                  <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden">
-                    {c.name}
-                  </CardTitle>
-                  <CardText
-                    className="wd-dashboard-course-description overflow-hidden"
-                    style={{ height: "100px" }}
+      <Row xs={1} md={5} className="g-4">
+        {courses.map((c) => (
+          <Col key={c._id} className="wd-dashboard-course" style={{ width: "300px" }}>
+            <Card className="h-100">
+              <CardImg
+                variant="top"
+                src={imageById[c._id] ?? fallback}
+                width="100%"
+                height={160}
+                alt={c.name}
+                style={{ objectFit: "cover" }}
+              />
+              <CardBody>
+                <CardTitle className="text-nowrap overflow-hidden">{c.name}</CardTitle>
+                <CardText className="overflow-hidden" style={{ height: "100px" }}>
+                  {c.description}
+                </CardText>
+              </CardBody>
+              <div className="card-footer bg-white border-0 d-flex justify-content-between align-items-center px-3 pb-3">
+                <Link href={`/Courses/${c._id}/Home`} className="btn btn-primary">Go</Link>
+                <div className="d-flex gap-2">
+                  <Button
+                    id="wd-edit-course-click"
+                    variant="warning"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCourse(c);
+                    }}
                   >
-                    {c.description}
-                  </CardText>
-                </CardBody>
-                <div className="card-footer bg-white border-0 d-flex justify-content-between align-items-center px-3 pb-3">
-                  <Link href={`/Courses/${c._id}/Home`} className="btn btn-primary">
-                    Go
-                  </Link>
-                  <div className="d-flex gap-2">
-                    <Button
-                      id="wd-edit-course-click"
-                      variant="warning"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        setCourse(c);
-                      }}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      id="wd-delete-course-click"
-                      variant="danger"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        dispatch(deleteCourse(c._id));
-                      }}
-                    >
-                      Delete
-                    </Button>
-                  </div>
+                    Edit
+                  </Button>
+                  <Button
+                    id="wd-delete-course-click"
+                    variant="danger"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      dispatch(deleteCourse(c._id));
+                    }}
+                  >
+                    Delete
+                  </Button>
                 </div>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </div>
+              </div>
+            </Card>
+          </Col>
+        ))}
+      </Row>
     </div>
   );
 }

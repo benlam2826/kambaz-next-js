@@ -1,32 +1,45 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { courses } from "../../Database";
-import { v4 as uuidv4 } from "uuid";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { courses as dbCourses } from "../../Database";
 
-const initialState = { courses };
+export interface Course {
+  _id: string;
+  name: string;
+  number: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  image?: string;
+  department?: string;
+  credits?: number;
+}
+
+interface CoursesState {
+  courses: Course[];
+}
+
+const initialState: CoursesState = {
+  courses: dbCourses as Course[],
+};
 
 const coursesSlice = createSlice({
-    name: "courses",
-    initialState,
-    reducers: {
-        addNewCourse: (state, { payload: course }) => {
-            const newCourse = { ...course, _id: uuidv4() };
-            state.courses = [...state.courses, newCourse] as any;
-        },
-        deleteCourse: (state, { payload: courseId }) => {
-            state.courses = state.courses.filter((c: any) => c._id !== courseId);
-        },
-        updateCourse: (state, { payload: course }) => {
-            state.courses = state.courses.map((c: any) =>
-                c._id === course._id ? course : c
-            ) as any;
-        },
-        setCourses: (state, { payload: courses }) => {
-            state.courses = courses;
-        },
+  name: "courses",
+  initialState,
+  reducers: {
+    addNewCourse: (state, { payload }: PayloadAction<Course>) => {
+      state.courses = [...state.courses, payload];
     },
+    deleteCourse: (state, { payload }: PayloadAction<string>) => {
+      state.courses = state.courses.filter((c) => c._id !== payload);
+    },
+    updateCourse: (state, { payload }: PayloadAction<Course>) => {
+      state.courses = state.courses.map((c) => (c._id === payload._id ? payload : c));
+    },
+    setCourses: (state, { payload }: PayloadAction<Course[]>) => {
+      state.courses = payload;
+    },
+  },
 });
 
 export const { addNewCourse, deleteCourse, updateCourse, setCourses } =
-    coursesSlice.actions;
-
+  coursesSlice.actions;
 export default coursesSlice.reducer;
