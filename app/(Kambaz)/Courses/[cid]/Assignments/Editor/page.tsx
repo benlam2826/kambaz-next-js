@@ -6,7 +6,7 @@ import { RootState } from "../../../../store";
 import { addAssignment, updateAssignment } from "../../Assignments/reducer";
 import { useEffect, useState } from "react";
 import { Button, FormControl } from "react-bootstrap";
-import type { Assignment } from "../../../../Database/types";
+import type { Assignment } from "../reducer";
 
 type EditableAssignment = Pick<
   Assignment,
