@@ -37,6 +37,11 @@ export default function Labs() {
             Lab 4: User Events
           </Link>
         </li>
+        <li>
+          <Link href="/Labs/Lab5" id="wd-lab5-link">
+            Lab 5: Server and API Routes
+          </Link>
+        </li>
       </ul>
 
       {/* Required: GitHub repo link with id="wd-github" */}

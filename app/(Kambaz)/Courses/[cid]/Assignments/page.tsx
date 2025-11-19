@@ -1,9 +1,13 @@
 "use client";
+
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 import type { RootState } from "../../../store";
+import { setAssignments } from "./reducer";
+import * as client from "../../../Assignments/client";
 
 export interface Assignment {
   _id: string;
@@ -18,9 +22,24 @@ export interface Assignment {
 
 export default function AssignmentsPage() {
   const { cid } = useParams<{ cid: string }>();
+  const dispatch = useDispatch();
+
   const { assignments } = useSelector(
     (s: RootState) => s.assignmentsReducer as { assignments: Assignment[] }
   );
+
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      if (!cid) return;
+      try {
+        const data = await client.findAssignmentsForCourse(cid);
+        dispatch(setAssignments(data));
+      } catch (e) {
+        console.error("Error fetching assignments", e);
+      }
+    };
+    fetchAssignments();
+  }, [cid, dispatch]);
 
   const courseAssignments = assignments.filter((a) => a.course === cid);
 

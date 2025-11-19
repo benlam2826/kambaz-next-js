@@ -1,17 +1,22 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Row, Col, Card, Button, CardImg, CardBody, CardTitle, CardText, FormControl } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewCourse, deleteCourse, updateCourse } from "../Courses/[cid]/reducer";
+import { setCourses } from "../Courses/[cid]/reducer";
 import type { RootState } from "../store";
 import type { Course } from "../Courses/[cid]/reducer";
-import { v4 as uuidv4 } from "uuid";
+import * as client from "../Courses/client";
 
 type CourseDraft = Pick<Course, "_id" | "name" | "number" | "startDate" | "endDate" | "description" | "image">;
 
 export default function Dashboard() {
-  const { courses } = useSelector((state: RootState) => state.coursesReducer);
+  const { courses } = useSelector(
+    (state: RootState) => state.coursesReducer
+  );
+  const { currentUser } = useSelector(
+    (state: RootState) => state.accountReducer
+  );
   const dispatch = useDispatch();
 
   const [course, setCourse] = useState<CourseDraft>({
@@ -35,6 +40,54 @@ export default function Dashboard() {
   };
   const fallback = "/images/reactjs.png";
 
+  const fetchCourses = async () => {
+    try {
+      const myCourses = await client.findMyCourses();
+      dispatch(setCourses(myCourses));
+    } catch (error) {
+      console.error("Error fetching courses", error);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchCourses();
+    }
+  }, [currentUser]);
+
+  const onAddNewCourse = async () => {
+    try {
+      const newCourse = await client.createCourse(course);
+      dispatch(setCourses([...courses, newCourse]));
+    } catch (error) {
+      console.error("Error creating course", error);
+    }
+  };
+
+  const onUpdateCourse = async () => {
+    try {
+      await client.updateCourse(course);
+      dispatch(
+        setCourses(
+          courses.map((c) => (c._id === course._id ? course : c))
+        )
+      );
+    } catch (error) {
+      console.error("Error updating course", error);
+    }
+  };
+
+  const onDeleteCourse = async (courseId: string) => {
+    try {
+      await client.deleteCourse(courseId);
+      dispatch(
+        setCourses(courses.filter((c) => c._id !== courseId))
+      );
+    } catch (error) {
+      console.error("Error deleting course", error);
+    }
+  };
+
   return (
     <div id="wd-dashboard" className="p-4">
       <h1 id="wd-dashboard-title">Dashboard</h1>
@@ -45,7 +98,7 @@ export default function Dashboard() {
         <Button
           className="float-end"
           id="wd-add-new-course-click"
-          onClick={() => dispatch(addNewCourse({ ...course, _id: uuidv4() }))}
+          onClick={onAddNewCourse}
         >
           Add
         </Button>
@@ -53,7 +106,7 @@ export default function Dashboard() {
           variant="warning"
           className="float-end me-2"
           id="wd-update-course-click"
-          onClick={() => dispatch(updateCourse(course as Course))}
+          onClick={onUpdateCourse}
         >
           Update
         </Button>
@@ -64,23 +117,33 @@ export default function Dashboard() {
           value={course.name}
           className="mb-2"
           placeholder="Course name"
-          onChange={(e) => setCourse({ ...course, name: e.target.value })}
+          onChange={(e) =>
+            setCourse({ ...course, name: e.target.value })
+          }
         />
         <FormControl
           as="textarea"
           rows={3}
           value={course.description}
           placeholder="Course description"
-          onChange={(e) => setCourse({ ...course, description: e.target.value })}
+          onChange={(e) =>
+            setCourse({ ...course, description: e.target.value })
+          }
         />
       </div>
 
-      <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2>
+      <h2 id="wd-dashboard-published">
+        Published Courses ({courses.length})
+      </h2>
       <hr />
 
       <Row xs={1} md={5} className="g-4">
         {courses.map((c) => (
-          <Col key={c._id} className="wd-dashboard-course" style={{ width: "300px" }}>
+          <Col
+            key={c._id}
+            className="wd-dashboard-course"
+            style={{ width: "300px" }}
+          >
             <Card className="h-100">
               <CardImg
                 variant="top"
@@ -91,13 +154,23 @@ export default function Dashboard() {
                 style={{ objectFit: "cover" }}
               />
               <CardBody>
-                <CardTitle className="text-nowrap overflow-hidden">{c.name}</CardTitle>
-                <CardText className="overflow-hidden" style={{ height: "100px" }}>
+                <CardTitle className="text-nowrap overflow-hidden">
+                  {c.name}
+                </CardTitle>
+                <CardText
+                  className="overflow-hidden"
+                  style={{ height: "100px" }}
+                >
                   {c.description}
                 </CardText>
               </CardBody>
               <div className="card-footer bg-white border-0 d-flex justify-content-between align-items-center px-3 pb-3">
-                <Link href={`/Courses/${c._id}/Home`} className="btn btn-primary">Go</Link>
+                <Link
+                  href={`/Courses/${c._id}/Home`}
+                  className="btn btn-primary"
+                >
+                  Go
+                </Link>
                 <div className="d-flex gap-2">
                   <Button
                     id="wd-edit-course-click"
@@ -114,7 +187,7 @@ export default function Dashboard() {
                     variant="danger"
                     onClick={(e) => {
                       e.preventDefault();
-                      dispatch(deleteCourse(c._id));
+                      onDeleteCourse(c._id);
                     }}
                   >
                     Delete
