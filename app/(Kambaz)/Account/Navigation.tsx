@@ -19,27 +19,20 @@ export default function AccountNavigation() {
     <ListGroup
       id="wd-account-navigation"
       className="wd list-group fs-5 rounded-0"
-      style={{ minWidth: 220 }}
-    >
+      style={{ minWidth: 220 }}>
       {!currentUser && (
         <>
           <ListGroupItem
             as={Link}
             href="/Account/Signin"
-            className={`border-0 ${
-              active("/Account/Signin") ? "active" : "text-danger"
-            }`}
-          >
+            className={`border-0 ${active("/Account/Signin") ? "active" : "text-danger"}`}>
             <VscAccount className="me-2" /> Sign in
           </ListGroupItem>
           <br />
           <ListGroupItem
             as={Link}
             href="/Account/Signup"
-            className={`border-0 ${
-              active("/Account/Signup") ? "active" : "text-danger"
-            }`}
-          >
+            className={`border-0 ${active("/Account/Signup") ? "active" : "text-danger"}`}>
             <FaUserPlus className="me-2" /> Sign up
           </ListGroupItem>
         </>
@@ -49,12 +42,17 @@ export default function AccountNavigation() {
           <ListGroupItem
             as={Link}
             href="/Account/Profile"
-            className={`border-0 ${
-              active("/Account/Profile") ? "active" : "text-danger"
-            }`}
-          >
+            className={`border-0 ${active("/Account/Profile") ? "active" : "text-danger"}`}>
             <FaUserCircle className="me-2" /> Profile
           </ListGroupItem>
+          {currentUser.role === "ADMIN" && (
+            <ListGroupItem
+              as={Link}
+              href="/Account/Users"
+              className={`border-0 ${active("/Account/Users") ? "active" : "text-danger"}`}>
+              Users
+            </ListGroupItem>
+          )}
         </>
       )}
     </ListGroup>
