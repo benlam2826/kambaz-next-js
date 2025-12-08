@@ -9,7 +9,15 @@ import { FormControl } from "react-bootstrap";
 import * as client from "../client";
 
 export default function Signup() {
-  const [user, setUser] = useState<any>({ role: "USER" });
+  const [user, setUser] = useState<any>({
+    role: "USER",
+    username: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    dob: "",
+    email: "",
+  });
   const dispatch = useDispatch();
   const [error, setError] = useState<string | null>(null);
 
@@ -32,17 +40,43 @@ export default function Signup() {
     <div className="wd-signup-screen">
       <h1>Sign up</h1>
       <FormControl
-        value={user.username || ""}
+        value={user.username}
         onChange={(e) => setUser({ ...user, username: e.target.value })}
         className="wd-username mb-2"
         placeholder="username"
       />
       <FormControl
-        value={user.password || ""}
+        value={user.password}
         onChange={(e) => setUser({ ...user, password: e.target.value })}
         className="wd-password mb-2"
         placeholder="password"
         type="password"
+      />
+      <FormControl
+        value={user.firstName}
+        onChange={(e) => setUser({ ...user, firstName: e.target.value })}
+        className="mb-2"
+        placeholder="first name"
+      />
+      <FormControl
+        value={user.lastName}
+        onChange={(e) => setUser({ ...user, lastName: e.target.value })}
+        className="mb-2"
+        placeholder="last name"
+      />
+      <FormControl
+        value={user.dob}
+        onChange={(e) => setUser({ ...user, dob: e.target.value })}
+        className="mb-2"
+        placeholder="date of birth"
+        type="date"
+      />
+      <FormControl
+        value={user.email}
+        onChange={(e) => setUser({ ...user, email: e.target.value })}
+        className="mb-3"
+        placeholder="email"
+        type="email"
       />
       <label className="form-label fw-semibold">Role</label>
       <select
