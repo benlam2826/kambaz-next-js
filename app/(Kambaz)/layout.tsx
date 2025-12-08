@@ -8,7 +8,8 @@ import { Provider, useDispatch } from "react-redux";
 import axios from "axios";
 import { setCurrentUser } from "./Account/reducer";
 
-const HTTP_SERVER = process.env.NEXT_PUBLIC_HTTP_SERVER;
+const HTTP_SERVER =
+  process.env.NEXT_PUBLIC_HTTP_SERVER || "http://localhost:4000";
 const axiosWithCredentials = axios.create({ withCredentials: true });
 
 function AuthInitializer() {

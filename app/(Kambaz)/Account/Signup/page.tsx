@@ -20,7 +20,10 @@ export default function Signup() {
       dispatch(setCurrentUser(currentUser));
       redirect("/Profile");
     } catch (e: any) {
-      const message = e?.response?.data?.message || "Signup failed. Try again.";
+      const message =
+        e?.response?.data?.message ||
+        e?.message ||
+        "Signup failed. Try again.";
       setError(message);
     }
   };
