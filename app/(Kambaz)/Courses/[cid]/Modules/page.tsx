@@ -14,9 +14,12 @@ import * as client from "../../client";
 
 export default function Modules() {
   const { cid } = useParams<{ cid: string }>();
+
   const [moduleName, setModuleName] = useState<string>("");
+
   const { modules } = useSelector((s: RootState) => s.modulesReducer);
   const dispatch = useDispatch();
+
   const fetchModules = async () => {
     if (!cid) return;
     const serverModules = await client.findModulesForCourse(cid as string);
@@ -33,7 +36,7 @@ export default function Modules() {
 
     const newModule = await client.createModuleForCourse(cid as string, {
       name: moduleName,
-      course: cid,
+      description: "",
     });
 
     dispatch(setModules([...modules, newModule]));
@@ -41,12 +44,14 @@ export default function Modules() {
   };
 
   const onRemoveModule = async (moduleId: string) => {
-    await client.deleteModule(moduleId);
+    if (!cid) return;
+    await client.deleteModule(cid as string, moduleId);
     dispatch(setModules(modules.filter((m) => m._id !== moduleId)));
   };
 
   const onUpdateModule = async (module: Module) => {
-    await client.updateModule(module);
+    if (!cid) return;
+    await client.updateModule(cid as string, module);
     const newModules = modules.map((m) =>
       m._id === module._id ? module : m
     );

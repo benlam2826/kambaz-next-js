@@ -3,75 +3,76 @@
 import { useSearchParams, useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../store";
-import { addAssignment, updateAssignment } from "../../Assignments/reducer";
+import { setAssignments } from "../reducer";
 import { useEffect, useState } from "react";
 import { Button, FormControl } from "react-bootstrap";
-import type { Assignment } from "../reducer";
-
-type EditableAssignment = Pick<
-  Assignment,
-  "name" | "description" | "points" | "due" | "availableFrom" | "availableUntil"
->;
-
-const emptyForm: EditableAssignment = {
-  name: "",
-  description: "",
-  points: 100,
-  due: "",
-  availableFrom: "",
-  availableUntil: "",
-};
+import * as client from "../../../../Assignments/client";
 
 export default function AssignmentEditor() {
   const { cid } = useParams<{ cid: string }>();
   const search = useSearchParams();
   const aid = search.get("aid");
   const router = useRouter();
-  const dispatch = useDispatch();
 
-  const assignments = useSelector(
-    (s: RootState) => s.assignmentsReducer.assignments
+  const dispatch = useDispatch();
+  const { assignments } = useSelector(
+    (s: RootState) => s.assignmentsReducer
   );
 
-  const [form, setForm] = useState<EditableAssignment>(emptyForm);
-  const [editingTarget, setEditingTarget] = useState<Assignment | null>(null);
+  const existing = assignments.find((a) => a._id === aid) ?? null;
+
+  const [form, setForm] = useState({
+    name: "",
+    description: "",
+    points: 100,
+    due: "",
+    availableFrom: "",
+    availableUntil: "",
+  });
 
   useEffect(() => {
-    if (aid) {
-      const found = assignments.find((a) => a._id === aid) ?? null;
-      setEditingTarget(found);
-      if (found) {
-        const { name, description, points, due, availableFrom, availableUntil } = found;
-        setForm({
-          name,
-          description,
-          points,
-          due: (due ?? "").slice(0, 10),
-          availableFrom: (availableFrom ?? "").slice(0, 10),
-          availableUntil: (availableUntil ?? "").slice(0, 10),
-        });
-      }
-    } else {
-      setEditingTarget(null);
-      setForm(emptyForm);
+    if (existing) {
+      setForm({
+        name: existing.name ?? "",
+        description: existing.description ?? "",
+        points: existing.points ?? 100,
+        due: existing.due ? existing.due.slice(0, 10) : "",
+        availableFrom: existing.availableFrom
+          ? existing.availableFrom.slice(0, 10)
+          : "",
+        availableUntil: existing.availableUntil
+          ? existing.availableUntil.slice(0, 10)
+          : "",
+      });
     }
-  }, [aid, assignments]);
+  }, [existing]);
 
-  const save = () => {
-    if (editingTarget) {
-      dispatch(updateAssignment({ ...editingTarget, ...form }));
+  const save = async () => {
+    if (!cid) return;
+
+    if (existing) {
+      const updated = await client.updateAssignment({
+        ...existing,
+        ...form,
+      });
+
+      dispatch(
+        setAssignments(
+          assignments.map((a) => (a._id === existing._id ? updated : a))
+        )
+      );
     } else {
-      dispatch(addAssignment({ course: cid!, ...form }));
+      const created = await client.createAssignment(cid, form);
+
+      dispatch(setAssignments([...assignments, created]));
     }
+
     router.push(`/Courses/${cid}/Assignments`);
   };
 
-  const cancel = () => router.push(`/Courses/${cid}/Assignments`);
-
   return (
-    <div className="p-3" id="wd-assignment-editor" style={{ maxWidth: 640 }}>
-      <h3>{editingTarget ? "Edit Assignment" : "New Assignment"}</h3>
-
+    <div className="p-3" style={{ maxWidth: 640 }}>
+      <h3>{existing ? "Edit Assignment" : "New Assignment"}</h3>
       <FormControl
         className="mb-2"
         placeholder="Name"
@@ -87,43 +88,46 @@ export default function AssignmentEditor() {
         onChange={(e) => setForm({ ...form, description: e.target.value })}
       />
       <FormControl
-        className="mb-2"
         type="number"
-        placeholder="Points"
+        className="mb-2"
         value={form.points}
-        onChange={(e) => setForm({ ...form, points: Number(e.target.value || 0) })}
+        onChange={(e) =>
+          setForm({ ...form, points: Number(e.target.value || 0) })
+        }
       />
-
-      <div className="row">
+      <div className="row mb-3">
         <div className="col">
-          <label className="form-label small">Due date</label>
+          <label className="form-label">Due</label>
           <FormControl
             type="date"
-            value={form.due || ""}
+            value={form.due}
             onChange={(e) => setForm({ ...form, due: e.target.value })}
           />
         </div>
         <div className="col">
-          <label className="form-label small">Available from</label>
+          <label className="form-label">Available From</label>
           <FormControl
             type="date"
-            value={form.availableFrom || ""}
-            onChange={(e) => setForm({ ...form, availableFrom: e.target.value })}
+            value={form.availableFrom}
+            onChange={(e) =>
+              setForm({ ...form, availableFrom: e.target.value })
+            }
           />
         </div>
         <div className="col">
-          <label className="form-label small">Available until</label>
+          <label className="form-label">Available Until</label>
           <FormControl
             type="date"
-            value={form.availableUntil || ""}
-            onChange={(e) => setForm({ ...form, availableUntil: e.target.value })}
+            value={form.availableUntil}
+            onChange={(e) =>
+              setForm({ ...form, availableUntil: e.target.value })
+            }
           />
         </div>
       </div>
-
-      <div className="d-flex gap-2 mt-3">
+      <div className="d-flex gap-2">
         <Button onClick={save}>Save</Button>
-        <Button variant="secondary" onClick={cancel}>
+        <Button variant="secondary" onClick={() => router.back()}>
           Cancel
         </Button>
       </div>

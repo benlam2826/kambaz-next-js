@@ -37,11 +37,19 @@ export default function Profile() {
   });
 
   useEffect(() => {
-    if (!currentUser) {
-      redirect("/Account/Signin");
-      return;
+    if (currentUser) {
+      setProfile((p) => ({
+        ...p,
+        ...currentUser,
+        username: currentUser.username ?? "",
+        password: "",
+        firstName: currentUser.firstName ?? "",
+        lastName: currentUser.lastName ?? "",
+        dob: currentUser.dob?.slice(0, 10) ?? "",
+        email: currentUser.email ?? "",
+        role: currentUser.role ?? "STUDENT",
+      }));
     }
-    setProfile(currentUser as ProfileType);
   }, [currentUser]);
 
   const updateProfile = async () => {
